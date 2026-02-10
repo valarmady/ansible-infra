@@ -1,0 +1,31 @@
+---  
+- name: Changing root password
+  ansible.builtin.user:
+    name: root
+    password: "{{ root_passwd | password_hash('sha512')}}"
+
+- name: Update & upgrade system
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install mandatory packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ mandatory_packages }}"
+
+- name: Admin user creation
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    password: "{{ admin_passwd | password_hash('sha512')}}" 
+    shell: /bin/bash
+    create_home: yes
+
+- name: Admin in sudoers
+  community.general.sudoers:
+    name: "{{ admin_user }}"
+    state: present
+    user: "{{ admin_user }}"
+    runas: root
+    commands: ALL

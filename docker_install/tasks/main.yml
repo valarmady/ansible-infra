@@ -1,0 +1,45 @@
+---
+- name: Remove old docker packages
+  ansible.builtin.apt: 
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ docker_old_packages }}" 
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ docker_dependencies }}"  
+
+- name: Création dossier keyrings
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: 0755
+
+- name: Add docker GPG Key
+  ansible.builtin.get_url:
+    url: 'https://download.docker.com/linux/{{ distrib }}/gpg'
+    dest: /etc/apt/keyrings/docker.asc
+
+- name: Add Docker APT source
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.sources
+    mode: '0644'
+    content: |
+      Types: deb
+      URIs: https://download.docker.com/linux/{{ distrib }}
+      Suites: {{ ansible_lsb.codename }}
+      Components: stable
+      Signed-By: /etc/apt/keyrings/docker.asc
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Docker packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ docker_packages }}"

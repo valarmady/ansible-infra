@@ -1,0 +1,7 @@
+---
+gitlab_dependencies:
+  - curl
+  - debian-archive-keyring
+  - lsb-release
+  - ca-certificates
+  - apt-transport-https

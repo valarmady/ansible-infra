@@ -1,0 +1,11 @@
+---
+- name: Initialize virtual machine
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - init
+    - ssh_hardening
+    - docker_install
+    - install_gitlab

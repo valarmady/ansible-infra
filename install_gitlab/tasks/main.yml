@@ -1,0 +1,25 @@
+---
+- name: Install gitlab dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ gitlab_dependencies }}"
+
+- name: Download GitLab CE
+  ansible.builtin.get_url:
+    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
+    dest: "/tmp/gitlab_repo.sh"
+    mode: '0755'
+
+- name: Add GitLab CE repository
+  ansible.builtin.shell: "/tmp/gitlab_repo.sh"
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install GitLab CE
+  ansible.builtin.apt:
+    name: gitlab-ce
+    state: present
+
