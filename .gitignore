@@ -1,0 +1,11 @@
+# =========================
+# Ansible secrets
+# =========================
+.vault_pass
+
+# =========================
+# Group Vars
+# =========================
+
+inventory/group_vars/app/
+inventory/group_vars/hosts
